@@ -142,6 +142,31 @@ public class Practice {
    * @return true if there is a two-way connection between v1 and v2, false otherwise
    */
   public static <T> boolean twoWay(Vertex<T> v1, Vertex<T> v2) {
+    if (v1 == null || v2 == null) return false;
+    if (v1 == v2) return true;
+
+    Set<Vertex<T>> pathOne = new HashSet<>();
+    boolean reachFirst = twoWay(v1, v2, pathOne);
+
+    Set<Vertex<T>> pathTwo = new HashSet<>();
+    boolean reachSecond = twoWay(v2, v1, pathTwo);
+
+    if (reachFirst && reachSecond) return true;
+
+    return false;
+  }
+
+  public static <T> boolean twoWay(Vertex<T> current, Vertex<T> goal, Set<Vertex<T>> visited) {
+    if (current == goal) return true;
+    if (current == null || visited.contains(current)) return false;
+
+    visited.add(current);
+    for (Vertex<T> vertex : current.neighbors) {
+      if (!visited.contains(vertex)) {
+        if (twoWay(vertex, goal, visited)) return true;
+      }
+    }
+
     return false;
   }
 
@@ -158,6 +183,21 @@ public class Practice {
    * @return whether there exists a valid positive path from starting to ending
    */
   public static boolean positivePathExists(Map<Integer, Set<Integer>> graph, int starting, int ending) {
+    Set<Integer> visited = new HashSet<>();
+    return positivePathExists(graph, starting, ending, visited);
+  }
+
+  public static boolean positivePathExists(Map<Integer, Set<Integer>> graph, int starting, int ending, Set<Integer> visited) {
+    if (starting < 0 || ending < 0 || !graph.containsKey(starting) || !graph.containsKey(ending) || visited.contains(starting)) return false;
+    if (starting == ending) return true;
+
+    visited.add(starting);
+    for (int num : graph.get(starting)) {
+        if (!visited.contains(num)) {
+            if (positivePathExists(graph, num, ending, visited)) return true;
+        }
+    }
+
     return false;
   }
 
