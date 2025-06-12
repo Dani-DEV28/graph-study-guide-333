@@ -211,6 +211,20 @@ public class Practice {
    * @return true if a person in the extended network works at the specified company, false otherwise
    */
   public static boolean hasExtendedConnectionAtCompany(Professional person, String companyName) {
+    Set<Professional> visited = new HashSet<>();
+    return hasExtendedConnectionAtCompany(person, companyName, visited);
+  }
+
+  public static boolean hasExtendedConnectionAtCompany(Professional person, String companyName, Set<Professional> visited) {
+    if (person == null || visited.contains(person)) return false;
+    if (person.getCompany().equals(companyName)) return true;
+
+    visited.add(person);
+
+    for (Professional coworker : person.getConnections()) {
+      if (hasExtendedConnectionAtCompany(coworker, companyName, visited)) return true;
+    }
+
     return false;
   }
 
@@ -282,6 +296,25 @@ public class Practice {
    * @return an unsorted list of next moves
    */
   public static List<int[]> nextMoves(char[][] board, int[] current, int[][] directions) {
-    return null;
+    return possibleMoves(board, current, directions);
+  }
+
+  public static List<int[]> possibleMoves(char[][] board, int[] current, int[][] directions) {
+    List<int[]> moves = new ArrayList<>();
+
+    int newR = 0;
+    int newC = 0;
+
+    for (int[] direction : directions) {
+      newR = current[0] + direction[0];
+      newC = current[1] + direction[1];
+
+      if (newR >= 0 && newR < board.length && newC >= 0 && newC < board[newR].length && board[newR][newC] != 'X') {
+        int[] newMove = {newR, newC};
+        moves.add(newMove);
+      }
+    }
+
+    return moves;
   }
 }
